@@ -2,7 +2,20 @@ require 'sinatra'
 require 'shotgun'
 
 def load_stats
-[ {
+[
+  {
+    home_team: "Jets",
+    away_team: "Giants",
+    home_score: 21,
+    away_score: 3
+  },
+  {
+    home_team: "Steelers",
+    away_team: "Giants",
+    home_score: 21,
+    away_score: 3
+  },
+  {
     home_team: "Patriots",
     away_team: "Giants",
     home_score: 21,
@@ -72,6 +85,18 @@ def load_stats
     home_team: "Steelers",
     away_team: "Patriots",
     home_score: 7,
+    away_score: 21
+  },
+  {
+    home_team: "Steelers",
+    away_team: "Colts",
+    home_score: 24,
+    away_score: 21
+  },
+  {
+    home_team: "Steelers",
+    away_team: "Colts",
+    home_score: 24,
     away_score: 21
   }
 ]
