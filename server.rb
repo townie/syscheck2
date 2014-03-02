@@ -121,6 +121,12 @@ def rank_teams(team_stats)
   team = team_stats.sort_by{|team, stat| stat[:win] + (stat[:win] - stat[:lose]) }.reverse
 end
 
+get '/' do
+  @stats = load_stats
+  @records = create_team_records
+  erb :index
+end
+
 get '/leaderboard' do
 
 @stats = load_stats
