@@ -1,6 +1,10 @@
 require 'sinatra'
 require 'shotgun'
 
+#Increased data set to make sure things were working properly on larger data sets as well as small sample size
+#Discovered that needed to create new custom sorting ranking
+#Bootstrapped to make look nice
+
 def load_stats
 [
   {
@@ -117,23 +121,23 @@ def create_team_records
     if game[:home_score] > game[:away_score]
       home_team = records[game[:home_team]]
       away_team = records[game[:away_team]]
-      home_team[:win] = records[game[:home_team]][:win] + 1
-      home_team[:pa] = records[game[:home_team]][:pa] + game[:away_score]
-      home_team[:pf] = records[game[:home_team]][:pf] + game[:home_score]
-      away_team [:lose] = records[game[:away_team]][:lose] + 1
-      away_team [:pa] = records[game[:away_team]][:pa] + game[:home_score]
-      away_team [:pf] = records[game[:away_team]][:pf] + game[:away_score]
+      home_team[:win] = home_team[:win] + 1
+      home_team[:pa] = home_team[:pa] + game[:away_score]
+      home_team[:pf] = home_team[:pf] + game[:home_score]
+      away_team[:lose] = away_team[:lose] + 1
+      away_team[:pa] = away_team[:pa] + game[:home_score]
+      away_team[:pf] = away_team[:pf] + game[:away_score]
      end
 
      if game[:home_score] < game[:away_score]
       home_team = records[game[:home_team]]
       away_team = records[game[:away_team]]
-      home_team[:lose] = records[game[:home_team]][:lose] + 1
-      home_team[:pa] = records[game[:home_team]][:pa] + game[:away_score]
-      home_team[:pf] = records[game[:home_team]][:pf] + game[:home_score]
-      away_team[:win] = records[game[:away_team]][:win] + 1
-      away_team[:pa] = records[game[:away_team]][:pa] + game[:home_score]
-      away_team[:pf] = records[game[:away_team]][:pf] + game[:away_score]
+      home_team[:lose] = home_team[:lose] + 1
+      home_team[:pa] = home_team[:pa] + game[:away_score]
+      home_team[:pf] = home_team[:pf] + game[:home_score]
+      away_team[:win] = away_team[:win] + 1
+      away_team[:pa] = away_team[:pa] + game[:home_score]
+      away_team[:pf] = away_team[:pf] + game[:away_score]
      end
 
     #SORT BY WINS THEN SORT BY LOSES SO HIGHEST WINS AT TOP AND MOST LOSES AT BOTTOM
@@ -143,19 +147,20 @@ def create_team_records
 end
 
 def rank_teams(team_stats)
-  team = team_stats.sort_by{|team, stat| stat[:win] + (stat[:win] - stat[:lose]) }.reverse
+  #clever sorting! weighted wins vs loses
+  team_stats.sort_by{|team, stat| stat[:win] + (stat[:win] - stat[:lose]) }.reverse
 end
 
 get '/' do
   @stats = load_stats
   @records = create_team_records
+
   erb :index
 end
 
 get '/leaderboard' do
-
-@stats = load_stats
-@records = rank_teams(create_team_records)
+  @stats = load_stats
+  @records = rank_teams(create_team_records)
 
   erb :leaderboard
 end
@@ -165,6 +170,7 @@ get '/teams/:team' do
   @stats = load_stats
   @records = create_team_records
   @current_team = params[:team]
+
   erb :teams
 end
 
